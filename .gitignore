@@ -1,0 +1,38 @@
+# Dados pessoais 
+config/*.json
+!config/config.exemplo.json
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.spec
+
+# PyInstaller
+*.manifest
+
+ReservaRU.exe 
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reserva RU UPF</title>
+<style>
+:root {
+  --verde:       #2d6a4f;
+  --verde-claro: #52b788;
+  --verde-bg:    #d8f3dc;
+  --creme:       #fefae0;
+  --laranja:     #e76f51;
+  --amarelo:     #f4a261;
+  --cinza:       #6b705c;
+  --cinza-cl:    #e9ecef;
+  --branco:      #ffffff;
+  --sombra:      0 2px 12px rgba(45,106,79,.10);
+  --r:           12px;
+  --hh:          52px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; width: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: var(--creme); color: #2d3a2e; }
+
+/* Header */
+header { height: var(--hh); background: var(--verde); color: white; padding: 0 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.18); flex-shrink: 0; }
+.logo { font-size: 22px; }
+.htext { flex: 1; }
+.htext h1 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+.htext span { font-size: .75rem; opacity: .7; }
+.hsocial { display: flex; align-items: center; gap: 8px; }
+.slink { color: rgba(255,255,255,.8); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 7px; transition: background .15s; }
+.slink:hover { background: rgba(255,255,255,.15); color: white; }
+.copy { font-size: .68rem; opacity: .6; white-space: nowrap; }
+
+/* Layout */
+.layout { display: grid; grid-template-columns: 1fr 230px; gap: 12px; padding: 12px; height: calc(100vh - var(--hh)); overflow: hidden; }
+.col-esq { display: grid; grid-template-rows: 1fr auto; gap: 10px; min-height: 0; overflow: hidden; }
+.col-dir { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow-y: auto; }
+
+/* Card */
+.card { background: var(--branco); border-radius: var(--r); box-shadow: var(--sombra); padding: 12px 14px; overflow: hidden; display: flex; flex-direction: column; }
+.cscroll { overflow-y: auto; flex: 1; min-height: 0; }
+.ctitle { font-size: .95rem; font-weight: 700; color: var(--verde); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* Perfis */
+.plist { display: flex; flex-direction: column; gap: 8px; }
+.pitem { border: 2px solid var(--cinza-cl); border-radius: 9px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: border-color .15s, background .15s; }
+.pitem:hover { border-color: var(--verde-claro); background: #f6fff8; }
+.pitem.sel { border-color: var(--verde); background: var(--verde-bg); }
+.pitem.off { opacity: .5; }
+.pchk { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.pitem.sel .pchk { background: var(--verde); border-color: var(--verde); color: white; }
+.pinfo { flex: 1; min-width: 0; }
+.pnome  { font-weight: 600; font-size: .88rem; }
+.pemail { font-size: .74rem; color: var(--cinza); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pref   { font-size: .7rem; background: var(--verde-bg); color: var(--verde); padding: 1px 7px; border-radius: 20px; margin-top: 3px; display: inline-block; }
+.badge  { font-size: .68rem; padding: 2px 7px; border-radius: 20px; font-weight: 600; flex-shrink: 0; }
+.bok  { background: #d1fae5; color: #065f46; }
+.berr { background: #fee2e2; color: #991b1b; }
+.bpnd { background: #fef9c3; color: #854d0e; }
+.pacoes { display: flex; gap: 4px; flex-shrink: 0; }
+.bico { width: 26px; height: 26px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.bedt { background: #e0f2fe; color: #0369a1; } .bedt:hover { background: #bae6fd; }
+.bdel { background: #fee2e2; color: #dc2626; } .bdel:hover { background: #fecaca; }
+.btog { background: #fef3c7; color: #92400e; } .btog:hover { background: #fde68a; }
+.badd { background: white; border: 2px dashed var(--verde-claro); color: var(--verde); border-radius: 8px; padding: 8px; width: 100%; font-family: inherit; font-size: .85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; flex-shrink: 0; }
+.badd:hover { background: var(--verde-bg); }
+.empty { text-align: center; padding: 20px 0; color: var(--cinza); }
+.empty .ei { font-size: 32px; margin-bottom: 6px; }
+.empty p { font-size: .85rem; }
+
+/* Log */
+.logbox { background: #1a1a2e; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; font-size: .7rem; color: #a8d8a8; overflow-y: auto; line-height: 1.5; flex: 1; min-height: 70px; max-height: 220px; }
+.le { color: #f87171; } .lw { color: #fbbf24; } .li { color: #86efac; }
+.lvz { color: #4a5568; font-style: italic; }
+
+/* Horários */
+.hrow { display: flex; gap: 8px; margin-bottom: 6px; }
+.hbox { flex: 1; background: var(--verde-bg); border-radius: 9px; padding: 8px; text-align: center; }
+.hlbl { font-size: .68rem; font-weight: 700; color: var(--cinza); text-transform: uppercase; letter-spacing: .3px; }
+.hhora { font-size: .95rem; font-weight: 800; color: var(--verde); margin: 2px 0; }
+.hdias { text-align: center; font-size: .72rem; color: var(--cinza); margin-bottom: 8px; }
+details.val summary { cursor: pointer; font-size: .78rem; color: var(--verde); font-weight: 600; list-style: none; display: flex; align-items: center; gap: 5px; padding: 4px 0; }
+details.val summary::-webkit-details-marker { display: none; }
+.vlist { list-style: none; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; background: #f9fafb; border-radius: 7px; padding: 8px 10px; }
+.vlist li { font-size: .74rem; color: #374151; padding-bottom: 4px; border-bottom: 1px solid #e5e7eb; }
+.vlist li:last-child { border: none; padding: 0; }
+.vlist em { color: var(--cinza); font-style: normal; }
+
+/* Refeição */
+.rbtns { display: flex; flex-direction: column; gap: 5px; }
+.rbtn { border: 2px solid var(--cinza-cl); border-radius: 8px; padding: 7px 10px; cursor: pointer; background: white; font-family: inherit; font-size: .82rem; text-align: left; display: flex; align-items: center; gap: 8px; }
+.rbtn:hover { border-color: var(--verde-claro); }
+.rbtn.on { border-color: var(--verde); background: var(--verde-bg); font-weight: 600; }
+
+/* Executar */
+.aviso { background: #fff7ed; border: 1.5px solid var(--amarelo); border-radius: 8px; padding: 7px 10px; font-size: .74rem; color: #92400e; margin-bottom: 8px; display: none; }
+.aviso.vis { display: block; }
+.selres { font-size: .78rem; color: var(--verde); font-weight: 600; margin-bottom: 8px; min-height: 16px; }
+.bexec { background: var(--verde); color: white; border: none; border-radius: 10px; padding: 11px 14px; font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.bexec:hover:not(:disabled) { background: #235e43; }
+.bexec:disabled { background: #9ca3af; cursor: not-allowed; }
+.bexec.run { background: var(--amarelo); }
+.hint { font-size: .68rem; color: var(--cinza); text-align: center; margin-top: 6px; }
+
+/* Modal */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: white; border-radius: 16px; padding: 24px; width: min(460px,96vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); animation: su .2s ease; }
+@keyframes su { from { transform: translateY(14px); opacity:0; } to { transform: none; opacity:1; } }
+.mtitle { font-size: 1.1rem; font-weight: 700; color: var(--verde); margin-bottom: 14px; }
+.frow { margin-bottom: 11px; }
+.frow label { display: block; font-size: .73rem; font-weight: 700; color: var(--cinza); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .3px; }
+.frow input, .frow select { width: 100%; border: 2px solid var(--cinza-cl); border-radius: 7px; padding: 8px 10px; font-family: inherit; font-size: .88rem; outline: none; }
+.frow input:focus, .frow select:focus { border-color: var(--verde); }
+.mbtns { display: flex; gap: 8px; margin-top: 14px; }
+.bsalv { flex:1; background: var(--verde); color: white; border: none; border-radius: 7px; padding: 10px; font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; }
+.bsalv:hover { background: #235e43; }
+.bcanc { flex:1; background: var(--cinza-cl); color: #374151; border: none; border-radius: 7px; padding: 10px; font-family: inherit; font-size: .9rem; cursor: pointer; }
+.bcanc:hover { background: #d1d5db; }
+.errmsg { background: #fee2e2; color: #991b1b; border-radius: 7px; padding: 8px 12px; font-size: .82rem; margin-bottom: 10px; display: none; }
+
+/* Toast */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1f2937; color: white; padding: 10px 20px; border-radius: 24px; font-size: .85rem; font-weight: 500; z-index: 200; transition: transform .28s cubic-bezier(.34,1.56,.64,1); box-shadow: 0 8px 24px rgba(0,0,0,.25); white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.verde { background: var(--verde); }
+.toast.verm  { background: var(--laranja); }
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: sp .7s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">🍽️</span>
+  <div class="htext">
+    <h1>Reserva RU UPF</h1>
+    <span id="data-header">carregando...</span>
+  </div>
+  <div class="hsocial">
+    <a href="https://instagram.com/kauha_" target="_blank" title="Instagram @kauha_" class="slink">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/kauhacosta" target="_blank" title="LinkedIn Kauhã Costa" class="slink">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <span class="copy">© Kauhã Costa</span>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- Coluna esquerda -->
+  <div class="col-esq">
+    <div class="card">
+      <div class="ctitle">👤 Perfis</div>
+      <div class="cscroll">
+        <div class="plist" id="plist">
+          <div class="empty"><div class="ei">🌿</div><p>Nenhum perfil cadastrado</p></div>
+        </div>
+      </div>
+      <button class="badd" onclick="abrirModal()">＋ Novo perfil</button>
+    </div>
+    <div class="card" style="min-height:0">
+      <div class="ctitle" style="justify-content:space-between;margin-bottom:6px">
+        <span>📋 Log de hoje</span>
+        <button onclick="carregarLog()" style="font-size:.7rem;background:none;border:none;cursor:pointer;color:var(--verde)">↻ atualizar</button>
+      </div>
+      <div class="logbox" id="logbox"><span class="lvz">Nenhuma execução hoje.</span></div>
+    </div>
+  </div>
+
+  <!-- Coluna direita -->
+  <div class="col-dir">
+    <!-- Horários -->
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:8px">🕐 Horários de reserva</div>
+      <div class="hrow">
+        <div class="hbox"><div class="hlbl">🌞 Almoço</div><div class="hhora">08h – 10h</div></div>
+        <div class="hbox"><div class="hlbl">🌙 Jantar</div><div class="hhora">14h – 16h</div></div>
+      </div>
+      <div class="hdias">Segunda a Sexta-feira</div>
+      <details class="val">
+        <summary>💰 Ver valores</summary>
+        <ul class="vlist">
+          <li><strong>Acadêmicos UPF:</strong> R$ 10,00 <em>(carteirinha + reserva)</em></li>
+          <li><strong>Funcionários:</strong> R$ 15,00 <em>(crachá + reserva)</em></li>
+          <li><strong>Professores/comunidade:</strong> R$ 20,00</li>
+          <li><strong>Suco 200ml:</strong> R$ 3,00 <em>(à parte)</em></li>
+          <li><strong>Marmita:</strong> + R$ 2,50</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- Refeição -->
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:6px">🥗 Refeição</div>
+      <p style="font-size:.74rem;color:var(--cinza);margin-bottom:8px">"Usar do perfil" mantém a preferência de cada um.</p>
+      <div class="rbtns">
+        <button class="rbtn on" data-ref="" onclick="selRef(this)"><span>⚙️</span> Usar do perfil</button>
+        <button class="rbtn" data-ref="Almoço e jantar" onclick="selRef(this)"><span>🌞🌙</span> Almoço e jantar</button>
+        <button class="rbtn" data-ref="Almoço" onclick="selRef(this)"><span>🌞</span> Almoço</button>
+        <button class="rbtn" data-ref="Jantar" onclick="selRef(this)"><span>🌙</span> Jantar</button>
+      </div>
+    </div>
+
+    <!-- Executar -->
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:6px">🚀 Executar</div>
+      <p style="font-size:.72rem;color:var(--cinza);margin-bottom:8px">Reserva para: <strong id="data-label">—</strong></p>
+      <div class="aviso" id="aviso">⚠️ <span id="aviso-txt"></span></div>
+      <div class="selres" id="selres">Nenhum perfil selecionado</div>
+      <button class="bexec" id="bexec" onclick="executar()" disabled>🍽️ Fazer reserva agora</button>
+      <div class="hint">Chrome abre em segundo plano</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="fecharModal(event)">
+  <div class="modal">
+    <div class="mtitle" id="mtitulo">Novo perfil</div>
+    <div class="errmsg" id="errmsg"></div>
+    <input type="hidden" id="enome">
+    <div class="frow"><label>Apelido *</label><input type="text" id="fnome" placeholder="ex: João, Maria"></div>
+    <div class="frow"><label>Nome completo *</label><input type="text" id="fnomec" placeholder="Como aparece nos sistemas UPF"></div>
+    <div class="frow"><label>E-mail institucional *</label><input type="email" id="femail" placeholder="000000@upf.br"></div>
+    <div class="frow"><label>Senha <small style="font-weight:400;text-transform:none">(opcional)</small></label><input type="password" id="fsenha" placeholder="Deixe em branco se não necessário"></div>
+    <div class="frow"><label>Matrícula</label><input type="text" id="fmat" placeholder="000000"></div>
+    <div class="frow"><label>Perfil do público</label><select id="fpub"></select></div>
+    <div class="frow"><label>Refeição padrão</label><select id="fref"><option>Almoço e jantar</option><option>Almoço</option><option>Jantar</option></select></div>
+    <div class="mbtns">
+      <button class="bcanc" onclick="fecharModal()">Cancelar</button>
+      <button class="bsalv" onclick="salvar()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let perfis=[], status={}, sel=new Set(), refOv="", editando=null, polling=null;
+
+async function init() {
+  const now = new Date();
+  document.getElementById("data-header").textContent = now.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+  document.getElementById("data-label").textContent = now.toLocaleDateString("pt-BR");
+  await loadConfig(); await loadStatus(); await carregarLog(); checkHorario();
+}
+
+async function loadConfig() {
+  const d = await fetch("/api/config").then(r=>r.json());
+  perfis = d.perfis||[];
+  document.getElementById("fpub").innerHTML = (d.perfis_publicos||[]).map(p=>`<option>${p}</option>`).join("");
+  render();
+}
+async function loadStatus() { status = await fetch("/api/status").then(r=>r.json()); render(); }
+async function carregarLog() {
+  const d = await fetch("/api/log").then(r=>r.json());
+  const b = document.getElementById("logbox");
+  if (!d.linhas?.length) { b.innerHTML='<span class="lvz">Nenhuma execução hoje.</span>'; return; }
+  b.innerHTML = d.linhas.map(l=>`<div class="${l.includes("[ERROR]")?"le":l.includes("[WARNING]")?"lw":"li"}">${esc(l)}</div>`).join("");
+  b.scrollTop = b.scrollHeight;
+}
+
+function checkHorario() {
+  const now = new Date(), dia = now.getDay(), m = now.getHours()*60+now.getMinutes();
+  const av = document.getElementById("aviso"), txt = document.getElementById("aviso-txt");
+  if (dia===0||dia===6) { txt.textContent="O RU não funciona nos fins de semana."; av.classList.add("vis"); return false; }
+  const ok = (m>=8*60&&m<=10*60)||(m>=14*60&&m<=16*60);
+  if (!ok) {
+    const prox = m<8*60?"08h00 (almoço)":m<14*60?"14h00 (jantar)":"08h00 amanhã";
+    txt.textContent=`Fora do horário de reservas. Próximo: ${prox}.`;
+    av.classList.add("vis"); return false;
+  }
+  av.classList.remove("vis"); return true;
+}
+
+function render() {
+  const list = document.getElementById("plist");
+  if (!perfis.length) { list.innerHTML='<div class="empty"><div class="ei">🌿</div><p>Nenhum perfil cadastrado</p></div>'; updResumo(); return; }
+  list.innerHTML = perfis.map(p=>{
+    const s=sel.has(p.nome), st=status[p.nome];
+    const badge = st?.executado?(st.sucesso?'<span class="badge bok">✅ feito</span>':'<span class="badge berr">❌ erro</span>'):'<span class="badge bpnd">⏳ pendente</span>';
+    return `<div class="pitem ${s?"sel":""} ${!p.ativo?"off":""}" onclick="toggleSel('${escA(p.nome)}')">
+      <div class="pchk">${s?"✓":""}</div>
+      <div class="pinfo">
+        <div class="pnome">${esc(p.nome)}${!p.ativo?' <span style="font-size:.63rem;background:#e5e7eb;color:#6b7280;padding:1px 5px;border-radius:8px">inativo</span>':""}</div>
+        <div class="pemail">${esc(p.email)}</div>
+        <span class="pref">${esc(p.refeicao||"Almoço e jantar")}</span>
+      </div>${badge}
+      <div class="pacoes" onclick="event.stopPropagation()">
+        <button class="bico btog" onclick="togAtivo('${escA(p.nome)}',${!p.ativo})" title="${p.ativo?"Desativar":"Ativar"}">${p.ativo?"⏸":"▶"}</button>
+        <button class="bico bedt" onclick="abrirEditar('${escA(p.nome)}')" title="Editar">✏️</button>
+        <button class="bico bdel" onclick="excluir('${escA(p.nome)}')" title="Excluir">🗑</button>
+      </div></div>`;
+  }).join("");
+  updResumo();
+}
+
+function toggleSel(nome) {
+  const p=perfis.find(x=>x.nome===nome); if(!p?.ativo) return;
+  sel.has(nome)?sel.delete(nome):sel.add(nome); render();
+}
+function updResumo() {
+  const el=document.getElementById("selres"), btn=document.getElementById("bexec"), ok=checkHorario();
+  el.textContent = sel.size?`Selecionados: ${[...sel].join(", ")}`:"Nenhum perfil selecionado";
+  btn.disabled = !sel.size||!ok;
+}
+function selRef(btn) { document.querySelectorAll(".rbtn").forEach(b=>b.classList.remove("on")); btn.classList.add("on"); refOv=btn.dataset.ref; }
+
+async function executar() {
+  if (!sel.size||!checkHorario()) return;
+  const btn=document.getElementById("bexec"); btn.disabled=true; btn.classList.add("run"); btn.innerHTML='<span class="spin"></span> Reservando...';
+  try {
+    const d=await fetch("/api/reservar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({perfis:[...sel],refeicao_override:refOv||null,forcar:true})}).then(r=>r.json());
+    if(d.ok){toast("Reserva iniciada! Acompanhe o log.","verde");startPolling();}
+    else{toast(d.erro||"Erro","verm");resetBtn();}
+  } catch{toast("Erro de conexão","verm");resetBtn();}
+}
+function resetBtn(){const b=document.getElementById("bexec");b.classList.remove("run");b.innerHTML="🍽️ Fazer reserva agora";updResumo();}
+function startPolling(){
+  if(polling)clearInterval(polling);
+  polling=setInterval(async()=>{
+    await carregarLog(); await loadStatus();
+    const p=await fetch("/api/processos").then(r=>r.json());
+    if([...sel].every(n=>p[n]&&p[n]!=="rodando")){
+      clearInterval(polling);polling=null;
+      toast([...sel].some(n=>p[n]==="erro")?"Concluído com erros — veja o log":"Reservas concluídas! ✅",[...sel].some(n=>p[n]==="erro")?"verm":"verde");
+      resetBtn();
+    }
+  },2500);
+}
+
+function abrirModal(){
+  editando=null; document.getElementById("mtitulo").textContent="Novo perfil";
+  ["enome","fnome","fnomec","femail","fsenha","fmat"].forEach(i=>document.getElementById(i).value="");
+  document.getElementById("fref").value="Almoço e jantar";
+  document.getElementById("errmsg").style.display="none";
+  document.getElementById("overlay").classList.add("open");
+}
+function abrirEditar(nome){
+  const p=perfis.find(x=>x.nome===nome); if(!p) return;
+  editando=nome; document.getElementById("mtitulo").textContent=`Editar — ${p.nome}`;
+  document.getElementById("enome").value=nome;
+  document.getElementById("fnome").value=p.nome||"";
+  document.getElementById("fnomec").value=p.nome_completo||"";
+  document.getElementById("femail").value=p.email||"";
+  document.getElementById("fsenha").value=p.senha||"";
+  document.getElementById("fmat").value=p.matricula||"";
+  document.getElementById("fpub").value=p.perfil_publico||"";
+  document.getElementById("fref").value=p.refeicao||"Almoço e jantar";
+  document.getElementById("errmsg").style.display="none";
+  document.getElementById("overlay").classList.add("open");
+}
+function fecharModal(e){if(e&&e.target!==document.getElementById("overlay"))return;document.getElementById("overlay").classList.remove("open");}
+async function salvar(){
+  const dados={nome:document.getElementById("fnome").value.trim(),nome_completo:document.getElementById("fnomec").value.trim(),email:document.getElementById("femail").value.trim(),senha:document.getElementById("fsenha").value,matricula:document.getElementById("fmat").value.trim(),perfil_publico:document.getElementById("fpub").value,refeicao:document.getElementById("fref").value};
+  const em=document.getElementById("errmsg"); em.style.display="none";
+  const r=await fetch(editando?`/api/perfis/${encodeURIComponent(editando)}`:"/api/perfis",{method:editando?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});
+  const d=await r.json();
+  if(!r.ok){em.textContent=d.erro||"Erro.";em.style.display="block";return;}
+  document.getElementById("overlay").classList.remove("open");
+  toast(editando?"Perfil atualizado ✅":"Perfil criado ✅","verde");
+  await loadConfig();
+}
+async function excluir(nome){
+  if(!confirm(`Excluir "${nome}"?`))return;
+  const r=await fetch(`/api/perfis/${encodeURIComponent(nome)}`,{method:"DELETE"});
+  if(r.ok){sel.delete(nome);toast(`"${nome}" removido`,"");await loadConfig();}
+  else toast("Erro ao excluir","verm");
+}
+async function togAtivo(nome,estado){
+  const r=await fetch(`/api/perfis/${encodeURIComponent(nome)}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({ativo:estado})});
+  if(r.ok){if(!estado)sel.delete(nome);await loadConfig();toast(estado?"Ativado":"Desativado","");}
+}
+
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function escA(s){return String(s||"").replace(/'/g,"\\'");}
+let tt; function toast(msg,tipo){const t=document.getElementById("toast");t.textContent=msg;t.className="toast show"+(tipo?" "+tipo:"");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),3200);}
+
+setInterval(()=>{loadStatus();carregarLog();updResumo();},60000);
+setInterval(()=>fetch("/api/ping",{method:"POST"}).catch(()=>{}),3000);
+init();
+</script>
+</body>
+</html>
