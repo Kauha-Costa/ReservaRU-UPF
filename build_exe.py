@@ -28,7 +28,6 @@ def main():
         "--add-data", f"{DIR / 'app_ui'}{SEP}app_ui",
         "--add-data", f"{DIR / 'config' / 'config.exemplo.json'}{SEP}config",
         "--add-data", f"{DIR / 'reserva.py'}{SEP}.",
-        "--add-data", f"{DIR / 'perfis.py'}{SEP}.",
         "--hidden-import", "flask",
         "--hidden-import", "werkzeug",
         "--hidden-import", "jinja2",

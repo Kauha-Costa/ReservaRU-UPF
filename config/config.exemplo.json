@@ -1,0 +1,13 @@
+{
+  "perfis": [
+    {
+      "nome": "Exemplo",
+      "email": "000000@upf.br",
+      "senha": "senha_aqui",
+      "nome_completo": "Seu Nome",
+      "matricula": "000000",
+      "perfil_publico": "Aluno graduação UPF",
+      "refeicao": "Almoço"
+    }
+  ]
+}
