@@ -34,7 +34,22 @@ LOG_DIR.mkdir(exist_ok=True)
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.ERROR)
 
-app = Flask(__name__, static_folder=str(BUNDLE_DIR / "app_ui"), static_url_path="")
+
+def localizar_ui_dir() -> Path:
+    candidatos = [
+        BASE_DIR / "app_ui",
+        BUNDLE_DIR / "app_ui",
+        Path(__file__).parent / "app_ui",
+        Path(sys.executable).parent / "app_ui",
+    ]
+    for caminho in candidatos:
+        if caminho.exists():
+            return caminho
+    return BASE_DIR / "app_ui"
+
+
+UI_DIR = localizar_ui_dir()
+app = Flask(__name__, static_folder=str(UI_DIR), static_url_path="")
 
 REFEICOES       = ["Almoço e jantar", "Almoço", "Jantar"]
 PERFIS_PUBLICOS = [
@@ -84,7 +99,7 @@ def status_hoje(nome_perfil: str) -> dict:
 
 @app.route("/")
 def index():
-    return send_from_directory(str(BASE_DIR / "app_ui"), "index.html")
+    return send_from_directory(str(UI_DIR), "index.html")
 
 @app.route("/api/config", methods=["GET"])
 def get_config():
@@ -170,12 +185,16 @@ _processos = {}
 # ── Heartbeat: encerra o servidor quando o browser fechar ────────────────────
 import time as _time
 _ultimo_ping = _time.time()
+_inicio_app = _time.time()
 
 def _watchdog():
-    """Para o processo se não receber ping por 8 segundos."""
+    """Para o processo se não receber ping por 20 segundos (após tolerância de inicialização de 30s)."""
     while True:
         _time.sleep(3)
-        if _time.time() - _ultimo_ping > 8:
+        # Nos primeiros 30 segundos de startup, ignora o watchdog para dar tempo do navegador abrir e carregar
+        if _time.time() - _inicio_app < 30:
+            continue
+        if _time.time() - _ultimo_ping > 20:
             os.kill(os.getpid(), 9)
 
 threading.Thread(target=_watchdog, daemon=True).start()
